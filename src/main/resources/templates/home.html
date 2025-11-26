@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chủ - Shop Demo</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Đồng bộ màu chủ đạo với trang Login */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --primary-color: #764ba2;
+        }
+
+        /* Navbar Custom */
+        .navbar-custom {
+            background: var(--primary-gradient);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+        }
+
+        .nav-link:hover {
+            opacity: 0.8;
+        }
+
+        .cart-badge {
+            background-color: #ffc107;
+            color: #000;
+            font-size: 0.75rem;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .hero-title {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        /* Product Card */
+        .product-card {
+            border: none;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            background: white;
+            height: 100%;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .product-img-wrapper {
+            position: relative;
+            overflow: hidden;
+            height: 200px; /* Cố định chiều cao ảnh */
+        }
+
+        .product-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-img-wrapper img {
+            transform: scale(1.1);
+        }
+
+        .price-tag {
+            color: #d63384;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .btn-add-cart {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 20px;
+            transition: background 0.3s;
+        }
+
+        .btn-add-cart:hover {
+            background: #5a3782;
+            color: white;
+        }
+
+        /* Footer */
+        footer {
+            background: #343a40;
+            color: white;
+            margin-top: auto; /* Đẩy footer xuống đáy */
+            padding: 40px 0 20px;
+        }
+
+        /* Toast Notification Custom */
+        .toast-container {
+            z-index: 1055;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#"><i class="fas fa-shopping-bag me-2"></i>Shop Demo</a>
+        <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link active" href="#">Trang chủ</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Sản phẩm</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Khuyến mãi</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Liên hệ</a></li>
+            </ul>
+
+            <div class="d-flex align-items-center gap-3">
+                <!-- Giỏ hàng -->
+                <a href="#" class="position-relative text-white text-decoration-none me-2" id="cart-icon">
+                    <i class="fas fa-shopping-cart fa-lg"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-badge" id="cart-count">
+                            0
+                        </span>
+                </a>
+
+                <!-- User Dropdown -->
+                <div class="dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle fa-lg me-1"></i> Admin
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li><a class="dropdown-item" href="#">Hồ sơ</a></li>
+                        <li><a class="dropdown-item" href="#">Đơn mua</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="login.html" id="logoutBtn">Đăng xuất</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero / Banner Section -->
+<header class="hero-section">
+    <div class="container">
+        <h1 class="display-4 hero-title">Săn Sale Mùa Hè</h1>
+        <p class="lead text-muted">Giảm giá lên đến 50% cho các sản phẩm công nghệ.</p>
+        <a href="#products" class="btn btn-custom btn-lg mt-3 shadow" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">Xem ngay</a>
+    </div>
+</header>
+
+<!-- Main Content: Products Grid -->
+<div class="container mb-5" id="products">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h3 class="fw-bold text-secondary border-start border-4 border-primary ps-3">Sản Phẩm Nổi Bật</h3>
+        </div>
+    </div>
+
+    <div class="row g-4" id="product-list">
+        <!-- Sản phẩm sẽ được render ở đây bằng JS hoặc để cứng HTML -->
+
+        <!-- Sản phẩm 1 -->
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card product-card h-100">
+                <div class="product-img-wrapper">
+                    <img src="https://placehold.co/600x400/png?text=iPhone+15" class="card-img-top" alt="Sản phẩm">
+                    <span class="badge bg-danger position-absolute top-0 end-0 m-2">-15%</span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">iPhone 15 Pro Max</h5>
+                    <p class="card-text text-muted small flex-grow-1">Titan tự nhiên, dung lượng 256GB, Chip A17 Pro mạnh mẽ.</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="price-tag">34.990.000₫</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 pb-3 pt-0">
+                    <button class="btn btn-add-cart w-100" data-name="iPhone 15 Pro Max">
+                        <i class="fas fa-cart-plus me-1"></i> Thêm vào giỏ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sản phẩm 2 -->
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card product-card h-100">
+                <div class="product-img-wrapper">
+                    <img src="https://placehold.co/600x400/purple/white?text=Macbook+Air" class="card-img-top" alt="Sản phẩm">
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">MacBook Air M2</h5>
+                    <p class="card-text text-muted small flex-grow-1">Thiết kế siêu mỏng nhẹ, pin 18 tiếng, màn hình Liquid Retina.</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="price-tag">26.500.000₫</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 pb-3 pt-0">
+                    <button class="btn btn-add-cart w-100" data-name="MacBook Air M2">
+                        <i class="fas fa-cart-plus me-1"></i> Thêm vào giỏ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sản phẩm 3 -->
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card product-card h-100">
+                <div class="product-img-wrapper">
+                    <img src="https://placehold.co/600x400/orange/white?text=Sony+Headphone" class="card-img-top" alt="Sản phẩm">
+                    <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2">Hot</span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">Sony WH-1000XM5</h5>
+                    <p class="card-text text-muted small flex-grow-1">Tai nghe chống ồn hàng đầu thế giới, pin 30 giờ.</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="price-tag">6.990.000₫</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 pb-3 pt-0">
+                    <button class="btn btn-add-cart w-100" data-name="Sony WH-1000XM5">
+                        <i class="fas fa-cart-plus me-1"></i> Thêm vào giỏ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sản phẩm 4 -->
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card product-card h-100">
+                <div class="product-img-wrapper">
+                    <img src="https://placehold.co/600x400/333/white?text=Watch+Ultra" class="card-img-top" alt="Sản phẩm">
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">Apple Watch Ultra 2</h5>
+                    <p class="card-text text-muted small flex-grow-1">Đồng hồ thể thao chuyên nghiệp, vỏ titan bền bỉ.</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="price-tag">21.490.000₫</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 pb-3 pt-0">
+                    <button class="btn btn-add-cart w-100" data-name="Apple Watch Ultra 2">
+                        <i class="fas fa-cart-plus me-1"></i> Thêm vào giỏ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sản phẩm 5 -->
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card product-card h-100">
+                <div class="product-img-wrapper">
+                    <img src="https://placehold.co/600x400/green/white?text=Camera+Canon" class="card-img-top" alt="Sản phẩm">
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">Canon EOS R50</h5>
+                    <p class="card-text text-muted small flex-grow-1">Máy ảnh Mirrorless nhỏ gọn, quay phim 4K sắc nét.</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="price-tag">18.200.000₫</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 pb-3 pt-0">
+                    <button class="btn btn-add-cart w-100" data-name="Canon EOS R50">
+                        <i class="fas fa-cart-plus me-1"></i> Thêm vào giỏ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sản phẩm 6 -->
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card product-card h-100">
+                <div class="product-img-wrapper">
+                    <img src="https://placehold.co/600x400/darkblue/white?text=Gaming+Mouse" class="card-img-top" alt="Sản phẩm">
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title fw-bold">Logitech G Pro X</h5>
+                    <p class="card-text text-muted small flex-grow-1">Chuột gaming không dây siêu nhẹ, cảm biến HERO 25K.</p>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <span class="price-tag">2.990.000₫</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 pb-3 pt-0">
+                    <button class="btn btn-add-cart w-100" data-name="Logitech G Pro X">
+                        <i class="fas fa-cart-plus me-1"></i> Thêm vào giỏ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Toast Notification (Thông báo thêm giỏ hàng) -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="fas fa-check-circle me-2"></i> Đã thêm <strong id="toast-product-name">sản phẩm</strong> vào giỏ hàng!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold text-uppercase mb-3">Shop Demo</h5>
+                <p class="small text-white-50">Chuyên cung cấp các sản phẩm công nghệ chính hãng với mức giá tốt nhất thị trường.</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="text-white"><i class="fab fa-facebook fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-twitter fa-lg"></i></a>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold text-uppercase mb-3">Liên kết nhanh</h5>
+                <ul class="list-unstyled small">
+                    <li><a href="#" class="text-white-50 text-decoration-none">Về chúng tôi</a></li>
+                    <li><a href="#" class="text-white-50 text-decoration-none">Chính sách bảo mật</a></li>
+                    <li><a href="#" class="text-white-50 text-decoration-none">Điều khoản dịch vụ</a></li>
+                    <li><a href="#" class="text-white-50 text-decoration-none">Hỗ trợ khách hàng</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5 class="fw-bold text-uppercase mb-3">Liên hệ</h5>
+                <ul class="list-unstyled small text-white-50">
+                    <li><i class="fas fa-home me-2"></i> 123 Đường ABC, Quận 1, TP.HCM</li>
+                    <li><i class="fas fa-envelope me-2"></i> hotro@shopdemo.com</li>
+                    <li><i class="fas fa-phone me-2"></i> 1900 1234</li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center pt-3 border-top border-secondary small text-white-50">
+            &copy; 2023 Shop Demo. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Xử lý nút Thêm vào giỏ hàng
+        $('.btn-add-cart').click(function() {
+            // 1. Hiệu ứng nút bấm
+            const btn = $(this);
+            const originalText = btn.html();
+            const productName = btn.data('name');
+
+            btn.html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
+
+            setTimeout(function() {
+                btn.html(originalText).prop('disabled', false);
+
+                // 2. Tăng số lượng giỏ hàng (Badge)
+                let count = parseInt($('#cart-count').text());
+                $('#cart-count').text(count + 1);
+
+                // 3. Hiệu ứng rung icon giỏ hàng
+                $('#cart-icon').addClass('animate__animated animate__tada'); // Nếu có animate.css
+                // Hoặc đơn giản đổi màu icon một chút
+                $('#cart-icon i').css('color', '#ffc107');
+                setTimeout(() => $('#cart-icon i').css('color', 'white'), 300);
+
+                // 4. Hiện Toast thông báo
+                $('#toast-product-name').text(productName);
+                const toastEl = document.getElementById('liveToast');
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+
+            }, 500); // Giả lập delay mạng 0.5s
+        });
+
+        // Xử lý nút đăng xuất
+        $('#logoutBtn').click(function(e) {
+            e.preventDefault();
+            if(confirm('Bạn có chắc chắn muốn đăng xuất không?')) {
+                window.location.href = 'login.html'; // Chuyển về trang login
+            }
+        });
+    });
+</script>
+</body>
+</html>
